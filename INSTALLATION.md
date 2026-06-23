@@ -6,7 +6,7 @@ Complete setup for the signaling server, Android TV receiver, and Android phone 
 
 | Role | Hardware / software |
 |------|---------------------|
-| **Host** | PC or Mac with Node.js 18+ (runs the signaling server) |
+| **Host** | PC or Mac with **[Node.js 18+](https://nodejs.org)** installed (`node` and `npm` must work in the terminal) |
 | **Display** | Android TV or Google TV (API 24+) |
 | **Sender (optional)** | PC browser and/or Android phone |
 
@@ -33,6 +33,34 @@ If `signaling-server` is not listed, you are in the wrong directory. `cd` into t
 ## 2. Install the signaling server (host PC)
 
 The signaling server is the only component that must run on a computer. It serves the web UI and coordinates WebRTC connections.
+
+### 2.1 Install Node.js (required — do this first)
+
+`npm` is included with **Node.js**. If PowerShell says *«npm no se reconoce»* / *«npm is not recognized»*, Node.js is not installed or the terminal was opened before installation finished.
+
+#### Windows
+
+1. Download the **LTS** installer from [https://nodejs.org](https://nodejs.org) (version **18 or newer**).
+2. Run the installer (.msi).
+3. Leave these options enabled (default):
+   - **Node.js runtime**
+   - **npm package manager**
+   - **Add to PATH** (critical — without this, `npm` will not work in PowerShell)
+4. Finish the installer and **close all PowerShell / CMD windows**.
+5. Open a **new** PowerShell window and verify:
+
+```powershell
+node --version
+npm --version
+```
+
+You should see version numbers (e.g. `v22.x.x` and `10.x.x`). If both work, continue to [2.2](#22-start-the-server).
+
+#### macOS / Linux
+
+Install Node.js 18+ via [nodejs.org](https://nodejs.org), Homebrew (`brew install node`), or your distro package manager, then run `node --version` and `npm --version`.
+
+### 2.2 Start the server
 
 > **Important:** `cd signaling-server` only works when your terminal is already inside the **tv-bridge project root** (the folder that contains `signaling-server`, `android-tv-receiver`, and `assets`). Running it from `C:\Users\...` or your Desktop will fail with *path not found*.
 
@@ -273,6 +301,30 @@ PowerShell is looking for a subfolder named `signaling-server` **in your current
    ```powershell
    cd path\to\tv-bridge-main
    cd signaling-server
+   ```
+
+### `npm` is not recognized (Windows)
+
+PowerShell cannot find `npm` because **Node.js is not installed** or the installer did not update your PATH.
+
+1. Install Node.js LTS from [nodejs.org](https://nodejs.org) (see [section 2.1](#21-install-nodejs-required--do-this-first)).
+2. During setup, ensure **“Add to PATH”** is checked.
+3. **Close and reopen** PowerShell (required after install).
+4. Test again:
+
+   ```powershell
+   node --version
+   npm --version
+   ```
+
+5. If `node` works but `npm` still fails, reinstall Node.js and choose **Repair**, or reboot the PC once.
+
+6. Only after both commands print a version, run:
+
+   ```powershell
+   cd path\to\tv-bridge\signaling-server
+   npm install
+   npm start
    ```
 
 ### TV does not appear in the list
