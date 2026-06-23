@@ -61,6 +61,10 @@ flowchart LR
 | [`android-phone-sender/`](android-phone-sender/) | WebRTC **offerer** from Android screen capture |
 | [`assets/`](assets/) | Logo, banner, and brand palette |
 
+## Installation
+
+**Full step-by-step guide:** [INSTALLATION.md](INSTALLATION.md) — signaling server, TV receiver, phone sender, firewall, HTTPS, and troubleshooting.
+
 ## Quick start (< 2 minutes)
 
 ### 1. Start the signaling server
@@ -110,6 +114,7 @@ tv-bridge/
 ├── android-tv-receiver/    # Android TV app (Kotlin, Compose for TV)
 ├── android-phone-sender/     # Android phone sender (Kotlin, Compose)
 ├── assets/                   # Brand images and SVG marks
+├── INSTALLATION.md           # Full setup guide
 ├── LICENSE                   # MIT
 ├── CODE_OF_CONDUCT.md
 └── CONTRIBUTING.md
