@@ -17,7 +17,16 @@ git clone https://github.com/miguelcobona-cloud/tv-bridge.git
 cd tv-bridge
 ```
 
-Or download the ZIP from GitHub and extract it.
+Or download the ZIP from GitHub and extract it. The folder is usually named `tv-bridge-main` — rename it to `tv-bridge` if you like, then open a terminal **inside that folder** before continuing.
+
+**Windows — confirm you are in the project root:**
+
+```powershell
+# You must see folders like signaling-server, android-tv-receiver, assets
+Get-ChildItem
+```
+
+If `signaling-server` is not listed, you are in the wrong directory. `cd` into the folder that contains `signaling-server` first.
 
 ---
 
@@ -25,17 +34,54 @@ Or download the ZIP from GitHub and extract it.
 
 The signaling server is the only component that must run on a computer. It serves the web UI and coordinates WebRTC connections.
 
+> **Important:** `cd signaling-server` only works when your terminal is already inside the **tv-bridge project root** (the folder that contains `signaling-server`, `android-tv-receiver`, and `assets`). Running it from `C:\Users\...` or your Desktop will fail with *path not found*.
+
 ### Windows (PowerShell)
 
+**If you just cloned the repo (section 1):**
+
 ```powershell
+cd tv-bridge
 cd signaling-server
 npm install
 npm start
 ```
 
+**If the project is already on disk** — go to the folder where you cloned or extracted it, then:
+
+```powershell
+# Replace with YOUR project location (example only)
+cd C:\Projects\tv-bridge
+cd signaling-server
+npm install
+npm start
+```
+
+**One-liner** (set `$ProjectRoot` to your actual `tv-bridge` path):
+
+```powershell
+$ProjectRoot = "C:\Projects\tv-bridge"
+Set-Location "$ProjectRoot\signaling-server"
+npm install
+npm start
+```
+
+**Check before `npm install`:**
+
+```powershell
+Get-Location
+# Should end with ...\tv-bridge\signaling-server
+
+Test-Path package.json
+# Should print: True
+```
+
+If `Test-Path package.json` is `False`, you are not in `signaling-server`. Go up one level (`cd ..`), run `Get-ChildItem`, and enter the `signaling-server` folder you see there.
+
 ### macOS / Linux
 
 ```bash
+cd tv-bridge          # skip if you are already in the project root
 cd signaling-server
 npm install
 npm start
@@ -201,6 +247,33 @@ To regenerate certificates after a network change, delete `signaling-server/cert
 ---
 
 ## Troubleshooting
+
+### `cd signaling-server` — path not found (Windows)
+
+PowerShell is looking for a subfolder named `signaling-server` **in your current directory**. That folder exists only inside the cloned/extracted **tv-bridge** project.
+
+1. Find the project folder (search for `tv-bridge` in File Explorer, or open the folder where you ran `git clone`).
+2. In PowerShell:
+
+   ```powershell
+   cd path\to\tv-bridge
+   Get-ChildItem signaling-server
+   ```
+
+   If the second command lists files, run:
+
+   ```powershell
+   cd signaling-server
+   npm install
+   npm start
+   ```
+
+3. **Wrong folder after ZIP download:** GitHub ZIPs often extract to `tv-bridge-main`. Use:
+
+   ```powershell
+   cd path\to\tv-bridge-main
+   cd signaling-server
+   ```
 
 ### TV does not appear in the list
 
