@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="TV-Bridge — Transmite tu pantalla a Android TV en tiempo real">
+  <meta name="theme-color" content="#0f172a">
+  <title>TV-Bridge</title>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header__brand">
+        <img class="header__logo" src="icons/logo.svg" width="32" height="32" alt="">
+        <h1 class="header__title">TV-Bridge</h1>
+      </div>
+      <div class="header__status" id="connection-status" role="status" aria-live="polite">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text">Conectando…</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="mobile-hint" id="mobile-hint-banner" hidden role="note"></div>
+
+      <section class="panel panel--preview" id="preview-panel" hidden>
+        <div class="panel__header">
+          <h2 class="panel__title">Vista previa</h2>
+          <span class="badge badge--live" id="stream-badge">En vivo</span>
+        </div>
+        <div class="preview-wrap" id="preview-wrap">
+          <video id="preview-video" autoplay muted playsinline></video>
+        </div>
+        <p class="preview-target" id="preview-target"></p>
+        <button type="button" class="btn btn--danger btn--full" id="btn-stop">
+          Detener transmisión
+        </button>
+      </section>
+
+      <section class="panel" id="tv-list-panel">
+        <div class="panel__header">
+          <h2 class="panel__title">TVs disponibles</h2>
+          <span class="badge" id="tv-count">0</span>
+        </div>
+
+        <div class="empty-state" id="empty-state">
+          <img class="empty-state__icon" src="icons/icon-empty.svg" width="64" height="64" alt="">
+          <p class="empty-state__title">No hay TVs conectadas</p>
+          <p class="empty-state__hint">
+            Abre la app TV-Bridge en tu Android TV y conéctala a esta misma red.
+          </p>
+        </div>
+
+        <ul class="tv-list" id="tv-list" role="list" hidden></ul>
+      </section>
+
+      <section class="panel panel--info">
+        <h2 class="panel__title panel__title--sm">Celular Android</h2>
+        <p class="empty-state__hint" style="max-width:none;margin:0 0 0.75rem;">
+          Instala la app emisora (sin certificados):
+          <a href="/download.html" style="color:var(--color-accent);">Descargar TV-Bridge Emisor</a>
+        </p>
+      </section>
+
+      <section class="panel panel--info">
+        <h2 class="panel__title panel__title--sm">Cómo funciona</h2>
+        <ol class="steps">
+          <li>Conecta la TV al servidor con la IP de este equipo.</li>
+          <li>Selecciona una TV de la lista.</li>
+          <li>Elige la pantalla o ventana que quieres compartir y activa <strong>Compartir audio</strong> si el navegador lo ofrece. El sonido solo se escuchará en la TV.</li>
+        </ol>
+      </section>
+    </main>
+
+    <div class="toast-container" id="toast-container" aria-live="assertive"></div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

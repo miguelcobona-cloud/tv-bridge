@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="TV-Bridge">
+  <rect width="48" height="48" rx="10" fill="#3B82F6"/>
+  <rect x="10" y="12" width="28" height="18" rx="2" fill="#0F172A"/>
+  <rect x="11.5" y="13.5" width="25" height="14" rx="1" fill="#1E293B"/>
+  <path d="M21 17.5L27 20.5L21 23.5V17.5Z" fill="#3B82F6"/>
+  <path d="M18 32H30V34H18V32Z" fill="#0F172A"/>
+</svg>

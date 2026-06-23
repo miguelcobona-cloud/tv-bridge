@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>Instalar TV-Bridge Emisor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .download-hero { text-align: center; padding: 1.5rem 0 1rem; }
+    .download-hero h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .download-hero p { color: var(--color-text-muted); margin-bottom: 1.25rem; }
+    .btn-download {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .steps { padding-left: 1.25rem; line-height: 1.6; }
+    .steps li { margin-bottom: 0.75rem; }
+    .steps strong { color: var(--color-text); }
+    .note {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--color-warning);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1rem;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header__brand">
+        <span class="header__logo" aria-hidden="true">▶</span>
+        <h1 class="header__title">TV-Bridge Emisor</h1>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel">
+        <div class="download-hero">
+          <h1>App para Android</h1>
+          <p>Transmite la pantalla de tu celular a la TV sin certificados ni HTTPS.</p>
+          <a class="btn-download" href="/downloads/tv-bridge-emisor.apk" download>
+            Descargar APK (release firmada)
+          </a>
+        </div>
+
+        <h2 class="panel__title panel__title--sm">Instalación</h2>
+        <ol class="steps">
+          <li>Descarga el APK con el botón de arriba (misma red Wi‑Fi que el PC).</li>
+          <li>Abre el archivo descargado. Si Android pide permiso, activa <strong>Instalar apps desconocidas</strong> para Chrome o Archivos.</li>
+          <li>Si aparece <strong>Google Play Protect</strong>, toca <strong>Más detalles</strong> y luego <strong>Instalar de todos modos</strong> (es normal en apps open source fuera de Play Store).</li>
+          <li>Abre <strong>TV-Bridge Emisor</strong>, escanea el QR de la TV o introduce la IP de este PC.</li>
+        </ol>
+
+        <div class="note">
+          Esta app es open source y está firmada con la clave del proyecto (no es malware).
+          Play Protect a veces bloquea desarrolladores nuevos hasta que eliges instalar manualmente.
+        </div>
+      </section>
+
+      <section class="panel panel--info">
+        <h2 class="panel__title panel__title--sm">¿Emisor en PC?</h2>
+        <p class="empty-state__hint" style="max-width:none;margin:0;">
+          En la laptop usa <a href="/" style="color:var(--color-accent);">la interfaz web</a> en esta misma dirección (puerto 3000).
+        </p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

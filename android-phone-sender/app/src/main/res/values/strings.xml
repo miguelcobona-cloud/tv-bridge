@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV-Bridge Emisor</string>
+    <string name="setup_title">Conectar al servidor</string>
+    <string name="setup_subtitle">Introduce la IP de tu PC o escanea el código QR que aparece en la TV.</string>
+    <string name="server_ip_label">IP del servidor</string>
+    <string name="server_ip_hint">Ej: 192.168.1.100</string>
+    <string name="connect_button">Conectar</string>
+    <string name="scan_qr_button">Escanear QR de la TV</string>
+    <string name="tv_list_title">Elige una TV</string>
+    <string name="tv_list_subtitle">Toca una TV para compartir la pantalla de tu celular.</string>
+    <string name="tv_list_empty">No hay TVs conectadas. Abre TV-Bridge en tu Android TV primero.</string>
+    <string name="tv_list_tap_to_cast">Toca para transmitir</string>
+    <string name="streaming_title">Transmitiendo</string>
+    <string name="stop_button">Detener transmisión</string>
+    <string name="change_server">Cambiar servidor</string>
+    <string name="status_connecting">Conectando…</string>
+    <string name="status_starting">Preparando transmisión…</string>
+    <string name="status_connected">Conectado</string>
+    <string name="status_streaming">En vivo</string>
+    <string name="status_disconnected">Desconectado</string>
+    <string name="error_ip_required">La IP del servidor es obligatoria.</string>
+    <string name="error_connection">No se pudo conectar al servidor.</string>
+    <string name="projection_notification_title">TV-Bridge</string>
+    <string name="projection_notification_text">Compartiendo pantalla con la TV</string>
+    <string name="qr_scan_title">Escanea el QR de la TV</string>
+    <string name="share_system_audio_title">Incluir audio del sistema</string>
+    <string name="share_system_audio_hint">Envía el sonido de apps (YouTube, música, etc.) a la TV y silencia el altavoz del celular. Android exige permiso de micrófono para capturar audio interno, pero no graba tu voz.</string>
+    <string name="audio_permission_title">Audio del sistema</string>
+    <string name="audio_permission_rationale">Para enviar el sonido de tus apps a la TV, Android requiere el permiso de micrófono. TV-Bridge no graba tu voz: solo captura el audio que reproduce el teléfono.</string>
+    <string name="audio_permission_continue">Continuar</string>
+    <string name="error_projection_denied">Se necesita permiso para compartir pantalla.</string>
+    <string name="error_audio_permission_denied">Sin permiso de audio no se puede enviar sonido a la TV. Puedes desactivar «Incluir audio del sistema» y transmitir solo vídeo.</string>
+</resources>

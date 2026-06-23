@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV-Bridge</string>
+    <string name="setup_title">Configuración del servidor</string>
+    <string name="setup_subtitle">Introduce la IP de la PC donde corre el servidor de señalización (puerto 3000).</string>
+    <string name="server_ip_label">Dirección IP del servidor</string>
+    <string name="server_ip_hint">Ej: 192.168.1.100</string>
+    <string name="tv_name_label">Nombre de esta TV</string>
+    <string name="tv_name_hint">Ej: Sala, Habitación</string>
+    <string name="connect_button">Conectar y esperar transmisión</string>
+    <string name="edit_config_button">Editar configuración</string>
+    <string name="waiting_title">Esperando transmisión</string>
+    <string name="waiting_subtitle">Abre TV-Bridge Emisor en tu celular o la web en tu PC.</string>
+    <string name="waiting_qr_instruction">Escanea con TV-Bridge Emisor. ¿No la tienes? Abre http://%1$s:3000/download.html en el celular.</string>
+    <string name="waiting_qr_content_description">Código QR para conectar desde el celular</string>
+    <string name="streaming_title">Recibiendo video</string>
+    <string name="status_connecting">Conectando al servidor…</string>
+    <string name="status_connected">Conectado — esperando emisor</string>
+    <string name="status_streaming">Transmisión activa</string>
+    <string name="status_error">Error de conexión</string>
+    <string name="status_disconnected">Desconectado</string>
+    <string name="error_ip_required">La dirección IP es obligatoria.</string>
+    <string name="error_name_required">El nombre de la TV es obligatorio.</string>
+</resources>

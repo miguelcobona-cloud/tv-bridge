@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Signaling server — auto-generated TLS dev certs
+signaling-server/certs/
+
+# Android
+.gradle/
+local.properties
+*.iml
+.idea/
+.cxx/
+.externalNativeBuild
+/captures
+**/build/
+*.apk
+*.aab
+*.ap_
+.DS_Store
+
+# OS / editor
+Thumbs.db
+*.swp
+*.swo
+.vscode/
