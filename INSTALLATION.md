@@ -6,7 +6,7 @@ Complete setup for the signaling server, Android TV receiver, and Android phone 
 
 | Role | Hardware / software |
 |------|---------------------|
-| **Host** | PC or Mac with **[Node.js 18+](https://nodejs.org)** and **Git** |
+| **Host** | PC with **Node.js 18+**, **Git**, and (for Android apps) **Android Studio** / SDK — installed automatically on Windows via script |
 | **Display** | Android TV or Google TV (API 24+) |
 | **Sender (optional)** | PC browser and/or Android phone |
 
@@ -185,30 +185,110 @@ Leave the terminal open while casting. Stop with `Ctrl+C`.
 
 ---
 
-## 3. Install the Android TV receiver
+## Windows — Android apps (automatic install & deploy)
 
-The TV app registers with the signaling server and displays the incoming WebRTC stream.
+Builds both APKs and installs them to your **TV** and **phone** without opening Android Studio manually.
 
-### Option A — Build from source (recommended for developers)
+**What this does:**
 
-1. Install [Android Studio](https://developer.android.com/studio) (Ladybug 2024.2+).
-2. **File → Open** → select the `android-tv-receiver/` folder.
-3. Wait for Gradle sync.
-4. Connect an Android TV device via ADB, or create an **Android TV (1080p)** emulator.
-5. Click **Run** to install the debug build.
+| Step | Action |
+|------|--------|
+| 1 | Installs **OpenJDK 17**, **Android Studio**, and **adb** via `winget` (if missing) |
+| 2 | Downloads Android SDK command-line tools and required packages |
+| 3 | Builds **TV receiver** (debug) and **phone sender** (release) |
+| 4 | Installs to TV/phone with `adb` (release APK is also served at `/download` when the server runs) |
 
-See [android-tv-receiver/README.md](android-tv-receiver/README.md) for module details.
+### Before you run (one-time on devices)
 
-### Option B — Sideload a release APK
+**Android TV / Google TV**
 
-If a release APK is published under [GitHub Releases](https://github.com/miguelcobona-cloud/tv-bridge/releases), copy it to a USB drive or use `adb install`:
+1. **Settings → Device preferences → About →** click **Build** 7 times → Developer options.
+2. **Developer options → USB debugging** ON.
+3. **Network debugging** (or **ADB over network**) ON — note the IP shown, e.g. `192.168.1.50:5555`.
 
-```bash
-adb connect <tv-ip>:5555
-adb install tv-bridge-receiver.apk
+**Android phone (optional sender)**
+
+1. Enable **Developer options** and **USB debugging**.
+2. Connect USB, accept **Allow USB debugging** on the phone.
+
+### Run the script (recommended)
+
+Open **PowerShell** (first time may need **Run as Administrator** for winget).  
+Replace `192.168.1.50:5555` with your TV’s network debugging address.
+
+```powershell
+# Same project path as the signaling-server script
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge"
+
+# Clone project first if you have not (see "Windows — full install" above)
+if (-not (Test-Path (Join-Path $ProjectRoot "scripts\windows\setup-android.ps1"))) {
+  git clone https://github.com/miguelcobona-cloud/tv-bridge.git $ProjectRoot
+}
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+& (Join-Path $ProjectRoot "scripts\windows\setup-android.ps1") -TvAddress "192.168.1.50:5555"
 ```
 
-Enable **Install unknown apps** on the TV if prompted.
+**Without TV IP** (USB TV box or install APKs only):
+
+```powershell
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+& (Join-Path $ProjectRoot "scripts\windows\setup-android.ps1")
+```
+
+**Skip Android Studio install** (already installed):
+
+```powershell
+& (Join-Path $ProjectRoot "scripts\windows\setup-android.ps1") -TvAddress "192.168.1.50:5555" -SkipStudioInstall
+```
+
+First run can take **15–30 minutes** (SDK download + Gradle). Next builds are much faster.
+
+### All-in-one: server + Android (two terminals)
+
+**Terminal 1 — signaling server** (keep open):
+
+```powershell
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge"
+Set-Location (Join-Path $ProjectRoot "signaling-server")
+npm install
+npm start
+```
+
+**Terminal 2 — build & install apps** (while server runs in terminal 1):
+
+```powershell
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+& (Join-Path $ProjectRoot "scripts\windows\setup-android.ps1") -TvAddress "192.168.1.50:5555"
+```
+
+After install, open **TV-Bridge** on the TV and **TV-Bridge Sender** on the phone. The phone APK is also at:
+
+`https://<host-ip>:3443/download`
+
+---
+
+## 3. Install the Android TV receiver
+
+> **Windows:** use the [automatic script](#windows--android-apps-automatic-install--deploy) above instead of manual steps.
+
+### macOS / Linux — command line
+
+```bash
+export ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"   # Linux: ~/Android/Sdk
+export JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home 2>/dev/null)}"
+
+cd ~/Documents/tv-bridge/android-tv-receiver
+echo "sdk.dir=$ANDROID_HOME" > local.properties
+./gradlew assembleDebug
+
+adb connect <tv-ip>:5555
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+See [android-tv-receiver/README.md](android-tv-receiver/README.md) for module details.
 
 ### Configure the TV app
 
@@ -222,32 +302,20 @@ Enable **Install unknown apps** on the TV if prompted.
 
 ## 4. Install the Android phone sender (optional)
 
-Use this when you want to mirror your **phone screen** to the TV (with audio support).
+> **Windows:** the [automatic script](#windows--android-apps-automatic-install--deploy) builds the release APK and installs via USB, or serves it from the signaling server.
 
-### Option A — Download from the host (after building the APK)
+### macOS / Linux
 
-1. Build the release APK on a machine with Android Studio:
+```bash
+cd ~/Documents/tv-bridge/android-phone-sender
+echo "sdk.dir=$ANDROID_HOME" > local.properties
+./gradlew assembleRelease
+adb install -r app/build/outputs/apk/release/app-release.apk
+```
 
-   ```bash
-   cd android-phone-sender
-   ./gradlew assembleRelease
-   ```
+Or download from the host: `https://<host-ip>:3443/download`
 
-   On Windows: `.\gradlew.bat assembleRelease`
-
-2. With the signaling server running, open on your phone:
-
-   `https://<host-ip>:3443/download`
-
-3. Install the APK (allow unknown sources if asked).
-
-### Option B — Build and install via USB
-
-1. Open `android-phone-sender/` in Android Studio.
-2. Run on a physical phone (screen capture does not work well on emulators).
-3. Or install the release APK with `adb install app/build/outputs/apk/release/app-release.apk`.
-
-Signing uses the community keystore documented in [android-phone-sender/signing/README.md](android-phone-sender/signing/README.md).
+Signing uses the community keystore in [android-phone-sender/signing/README.md](android-phone-sender/signing/README.md).
 
 ### Configure the phone app
 
@@ -342,6 +410,25 @@ Get-NetTCPConnection -LocalPort 3000 | ForEach-Object { Stop-Process -Id $_.Owni
 ```
 
 Then run `npm start` again.
+
+### Android build or adb failed (Windows)
+
+1. Run PowerShell **as Administrator** once for winget installs.
+2. Close and reopen PowerShell after installing JDK / Platform Tools.
+3. Enable **Network debugging** on the TV and pass the correct address:
+
+   ```powershell
+   adb connect 192.168.1.50:5555
+   adb devices
+   ```
+
+4. Re-run:
+
+   ```powershell
+   & (Join-Path $HOME "Documents\tv-bridge\scripts\windows\setup-android.ps1") -TvAddress "192.168.1.50:5555" -SkipStudioInstall
+   ```
+
+5. If Gradle says SDK missing, delete `%LOCALAPPDATA%\Android\Sdk` and run the script again (it will re-download tools).
 
 ---
 

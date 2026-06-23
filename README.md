@@ -63,7 +63,7 @@ flowchart LR
 
 ## Installation
 
-**Full step-by-step guide:** [INSTALLATION.md](INSTALLATION.md) — signaling server, TV receiver, phone sender, firewall, HTTPS, and troubleshooting.
+**Full step-by-step guide:** [INSTALLATION.md](INSTALLATION.md) — signaling server, **automatic Android Studio + APK install**, TV receiver, phone sender, firewall, and troubleshooting.
 
 ## Quick start (< 2 minutes)
 
