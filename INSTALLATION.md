@@ -6,119 +6,139 @@ Complete setup for the signaling server, Android TV receiver, and Android phone 
 
 | Role | Hardware / software |
 |------|---------------------|
-| **Host** | PC or Mac with **[Node.js 18+](https://nodejs.org)** installed (`node` and `npm` must work in the terminal) |
+| **Host** | PC or Mac with **[Node.js 18+](https://nodejs.org)** and **Git** |
 | **Display** | Android TV or Google TV (API 24+) |
 | **Sender (optional)** | PC browser and/or Android phone |
 
-## 1. Get the project
+---
+
+## Windows — full install (copy & paste)
+
+Open **PowerShell** (not CMD). Select **all lines** below, paste, press **Enter**.  
+Each step checks the path before continuing — you should not need to type `cd` by hand.
+
+```powershell
+# ── 0) Verify Node.js, npm, and Git ─────────────────────────────
+Write-Host "`n=== Checking tools ===" -ForegroundColor Cyan
+node --version
+npm --version
+git --version
+if ($LASTEXITCODE -ne 0) { throw "Install Node.js from https://nodejs.org and Git from https://git-scm.com then open a NEW PowerShell window." }
+
+# ── 1) Project folder (default: Documents\tv-bridge) ───────────
+# To use another drive/folder, change ONLY the next line, e.g. "D:\Apps\tv-bridge"
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge"
+Write-Host "`nProject folder: $ProjectRoot" -ForegroundColor Cyan
+
+# ── 2) Download repo if signaling-server is missing ─────────────
+$ServerDir = Join-Path $ProjectRoot "signaling-server"
+$PackageJson = Join-Path $ServerDir "package.json"
+
+if (-not (Test-Path $PackageJson)) {
+  Write-Host "Downloading TV-Bridge from GitHub..." -ForegroundColor Yellow
+  $Parent = Split-Path $ProjectRoot -Parent
+  if (-not (Test-Path $Parent)) { New-Item -ItemType Directory -Force -Path $Parent | Out-Null }
+  if (Test-Path (Join-Path $ProjectRoot ".git")) {
+    Set-Location $ProjectRoot
+    git pull
+  } elseif (Test-Path $ProjectRoot) {
+    throw "Folder exists but is not a TV-Bridge clone: $ProjectRoot`nDelete it or change `$ProjectRoot to another path."
+  } else {
+    git clone https://github.com/miguelcobona-cloud/tv-bridge.git $ProjectRoot
+  }
+}
+
+if (-not (Test-Path $PackageJson)) {
+  throw "ERROR: package.json not found at:`n  $PackageJson`nCheck `$ProjectRoot or clone manually."
+}
+
+# ── 3) Enter signaling-server (guided path, no manual cd) ───────
+Set-Location $ServerDir
+Write-Host "`nCurrent folder: $(Get-Location)" -ForegroundColor Green
+Write-Host "package.json found: $(Test-Path package.json)" -ForegroundColor Green
+
+# ── 4) Install dependencies and start server ────────────────────
+Write-Host "`n=== npm install ===" -ForegroundColor Cyan
+npm install
+if ($LASTEXITCODE -ne 0) { throw "npm install failed." }
+
+Write-Host "`n=== npm start (Ctrl+C to stop) ===" -ForegroundColor Cyan
+npm start
+```
+
+When it works you will see:
+
+```text
+TV-Bridge signaling server listening on http://localhost:3000
+```
+
+Open in the browser: **http://localhost:3000**
+
+### Already have the project somewhere else?
+
+Run this to **find** `signaling-server` on your PC, then start the server:
+
+```powershell
+# Search common locations (may take a few seconds)
+$found = @(
+  Get-ChildItem -Path $HOME\Documents, $HOME\Downloads, $HOME\Desktop -Recurse -Filter "package.json" -ErrorAction SilentlyContinue |
+    Where-Object { $_.DirectoryName -match "signaling-server$" }
+) | Select-Object -First 1
+
+if (-not $found) {
+  Write-Host "Not found under Documents/Downloads/Desktop. Use the full script above to clone to Documents\tv-bridge."
+} else {
+  $ServerDir = $found.DirectoryName
+  Write-Host "Found: $ServerDir" -ForegroundColor Green
+  Set-Location $ServerDir
+  npm install
+  npm start
+}
+```
+
+### ZIP download instead of Git?
+
+1. Download ZIP from https://github.com/miguelcobona-cloud/tv-bridge/archive/refs/heads/main.zip  
+2. Extract it (folder is often `tv-bridge-main`).  
+3. Run (adjust path if you extracted elsewhere):
+
+```powershell
+$ProjectRoot = Join-Path $HOME "Documents\tv-bridge-main"
+$ServerDir = Join-Path $ProjectRoot "signaling-server"
+Set-Location $ServerDir
+if (-not (Test-Path package.json)) { throw "Wrong folder. List contents: $(Get-ChildItem $ProjectRoot)" }
+npm install
+npm start
+```
+
+---
+
+## 1. Get the project (macOS / Linux)
 
 ```bash
 git clone https://github.com/miguelcobona-cloud/tv-bridge.git
 cd tv-bridge
+ls signaling-server/package.json   # must exist
 ```
-
-Or download the ZIP from GitHub and extract it. The folder is usually named `tv-bridge-main` — rename it to `tv-bridge` if you like, then open a terminal **inside that folder** before continuing.
-
-**Windows — confirm you are in the project root:**
-
-```powershell
-# You must see folders like signaling-server, android-tv-receiver, assets
-Get-ChildItem
-```
-
-If `signaling-server` is not listed, you are in the wrong directory. `cd` into the folder that contains `signaling-server` first.
 
 ---
 
-## 2. Install the signaling server (host PC)
-
-The signaling server is the only component that must run on a computer. It serves the web UI and coordinates WebRTC connections.
-
-### 2.1 Install Node.js (required — do this first)
-
-`npm` is included with **Node.js**. If PowerShell says *«npm no se reconoce»* / *«npm is not recognized»*, Node.js is not installed or the terminal was opened before installation finished.
-
-#### Windows
-
-1. Download the **LTS** installer from [https://nodejs.org](https://nodejs.org) (version **18 or newer**).
-2. Run the installer (.msi).
-3. Leave these options enabled (default):
-   - **Node.js runtime**
-   - **npm package manager**
-   - **Add to PATH** (critical — without this, `npm` will not work in PowerShell)
-4. Finish the installer and **close all PowerShell / CMD windows**.
-5. Open a **new** PowerShell window and verify:
-
-```powershell
-node --version
-npm --version
-```
-
-You should see version numbers (e.g. `v22.x.x` and `10.x.x`). If both work, continue to [2.2](#22-start-the-server).
-
-#### macOS / Linux
-
-Install Node.js 18+ via [nodejs.org](https://nodejs.org), Homebrew (`brew install node`), or your distro package manager, then run `node --version` and `npm --version`.
-
-### 2.2 Start the server
-
-> **Important:** `cd signaling-server` only works when your terminal is already inside the **tv-bridge project root** (the folder that contains `signaling-server`, `android-tv-receiver`, and `assets`). Running it from `C:\Users\...` or your Desktop will fail with *path not found*.
-
-### Windows (PowerShell)
-
-**If you just cloned the repo (section 1):**
-
-```powershell
-cd tv-bridge
-cd signaling-server
-npm install
-npm start
-```
-
-**If the project is already on disk** — go to the folder where you cloned or extracted it, then:
-
-```powershell
-# Replace with YOUR project location (example only)
-cd C:\Projects\tv-bridge
-cd signaling-server
-npm install
-npm start
-```
-
-**One-liner** (set `$ProjectRoot` to your actual `tv-bridge` path):
-
-```powershell
-$ProjectRoot = "C:\Projects\tv-bridge"
-Set-Location "$ProjectRoot\signaling-server"
-npm install
-npm start
-```
-
-**Check before `npm install`:**
-
-```powershell
-Get-Location
-# Should end with ...\tv-bridge\signaling-server
-
-Test-Path package.json
-# Should print: True
-```
-
-If `Test-Path package.json` is `False`, you are not in `signaling-server`. Go up one level (`cd ..`), run `Get-ChildItem`, and enter the `signaling-server` folder you see there.
-
-### macOS / Linux
+## 2. Install the signaling server (macOS / Linux)
 
 ```bash
-cd tv-bridge          # skip if you are already in the project root
-cd signaling-server
+cd "$(dirname "$0")/.." 2>/dev/null || true
+cd ~/Documents/tv-bridge/signaling-server   # or your clone path
+test -f package.json || { echo "ERROR: not in signaling-server"; exit 1; }
+node --version && npm --version
 npm install
 npm start
 ```
 
-You should see:
+Or from the repo root:
 
-```text
-TV-Bridge signaling server listening on http://localhost:3000
+```bash
+cd tv-bridge
+cd signaling-server && npm install && npm start
 ```
 
 ### Endpoints
@@ -276,56 +296,18 @@ To regenerate certificates after a network change, delete `signaling-server/cert
 
 ## Troubleshooting
 
-### `cd signaling-server` — path not found (Windows)
+### `cd` path not found OR `npm` not recognized (Windows)
 
-PowerShell is looking for a subfolder named `signaling-server` **in your current directory**. That folder exists only inside the cloned/extracted **tv-bridge** project.
+**Use the [full copy-paste script](#windows--full-install-copy--paste) at the top of this guide.** It clones to `Documents\tv-bridge`, checks every folder, and runs `npm` without manual `cd`.
 
-1. Find the project folder (search for `tv-bridge` in File Explorer, or open the folder where you ran `git clone`).
-2. In PowerShell:
+If `npm` still fails after Node.js is installed:
 
-   ```powershell
-   cd path\to\tv-bridge
-   Get-ChildItem signaling-server
-   ```
+```powershell
+node --version
+npm --version
+```
 
-   If the second command lists files, run:
-
-   ```powershell
-   cd signaling-server
-   npm install
-   npm start
-   ```
-
-3. **Wrong folder after ZIP download:** GitHub ZIPs often extract to `tv-bridge-main`. Use:
-
-   ```powershell
-   cd path\to\tv-bridge-main
-   cd signaling-server
-   ```
-
-### `npm` is not recognized (Windows)
-
-PowerShell cannot find `npm` because **Node.js is not installed** or the installer did not update your PATH.
-
-1. Install Node.js LTS from [nodejs.org](https://nodejs.org) (see [section 2.1](#21-install-nodejs-required--do-this-first)).
-2. During setup, ensure **“Add to PATH”** is checked.
-3. **Close and reopen** PowerShell (required after install).
-4. Test again:
-
-   ```powershell
-   node --version
-   npm --version
-   ```
-
-5. If `node` works but `npm` still fails, reinstall Node.js and choose **Repair**, or reboot the PC once.
-
-6. Only after both commands print a version, run:
-
-   ```powershell
-   cd path\to\tv-bridge\signaling-server
-   npm install
-   npm start
-   ```
+Close PowerShell, open a **new** window, run the full script again. Reinstall Node.js from [nodejs.org](https://nodejs.org) with **Add to PATH** checked if needed.
 
 ### TV does not appear in the list
 

@@ -69,13 +69,7 @@ flowchart LR
 
 ### 1. Start the signaling server
 
-**Windows (PowerShell):**
-
-```powershell
-cd signaling-server
-npm install
-npm start
-```
+**Windows (PowerShell):** use the **[copy-paste install script](INSTALLATION.md#windows--full-install-copy--paste)** in `INSTALLATION.md` (clones to `Documents\tv-bridge`, no manual `cd`).
 
 **macOS / Linux:**
 
